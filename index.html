@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crazy Clearance — Follow & Save</title>
+<meta name="description" content="Follow Crazy Clearance for weekly clearance drops, exclusive reservation stock, and deals at Tipton, Oldham & Aylesbury.">
+<style>
+  :root{
+    --yellow:#FFC900;
+    --dark:#111111;
+    --grey:#6b6b6b;
+    --border:#e9e9e9;
+    --bg:#f4f4f4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    padding:32px 16px;
+  }
+  .card{
+    width:100%;
+    max-width:420px;
+    background:#ffffff;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.12);
+    height:fit-content;
+  }
+
+  /* ---- Brand header ---- */
+  .brand{
+    background:var(--dark);
+    padding:40px 24px 32px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+  }
+  .logo-mark{
+    width:180px;
+    height:auto;
+    object-fit:contain;
+  }
+  .location{
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:1px;
+  }
+  .location .city{ color:var(--yellow); }
+  .location .postcode{ color:#ffffff; margin-left:8px; }
+
+  /* ---- Intro ---- */
+  .intro{
+    background:var(--yellow);
+    padding:22px 24px 24px;
+  }
+  .intro h1{
+    font-size:22px;
+    font-weight:900;
+    color:var(--dark);
+    margin-bottom:8px;
+  }
+  .intro p{
+    font-size:14px;
+    color:#3a3a3a;
+    line-height:1.5;
+    font-weight:600;
+  }
+
+  /* ---- Links ---- */
+  .links{
+    display:flex;
+    flex-direction:column;
+  }
+  .link-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:16px 24px;
+    text-decoration:none;
+    border-bottom:1px solid var(--border);
+    transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+    position:relative;
+  }
+  .link-row:last-child{ border-bottom:none; }
+  .link-row:hover, .link-row:active{
+    background:#fafafa;
+    transform:translateY(-3px);
+    box-shadow:0 8px 16px rgba(0,0,0,0.08);
+    z-index:1;
+  }
+  .link-row:hover .icon{ animation-play-state:paused; transform:scale(1.12) translateY(-6px); }
+
+  .icon{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    animation:float 2.6s ease-in-out infinite;
+    transition:transform .2s ease;
+  }
+  .icon svg{ width:20px; height:20px; }
+  .icon.website{ background:var(--dark); animation-delay:0s; }
+  .icon.instagram{ background:radial-gradient(circle at 30% 110%, #ffdb73 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%); animation-delay:.15s; }
+  .icon.facebook{ background:#1877F2; animation-delay:.3s; }
+  .icon.tiktok{ background:#111111; animation-delay:.45s; }
+  .icon.google{ background:#ffffff; border:1px solid var(--border); animation-delay:.6s; }
+
+  @keyframes float{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+
+  .link-text{ display:flex; flex-direction:column; }
+  .link-text .title{ font-size:15px; font-weight:800; color:var(--dark); }
+  .link-text .subtitle{ font-size:13px; color:var(--grey); margin-top:1px; }
+
+  .chevron{ margin-left:auto; color:#c9c9c9; flex-shrink:0; }
+
+  footer{
+    text-align:center;
+    padding:20px 24px 28px;
+    font-size:12px;
+    color:#9a9a9a;
+    font-weight:600;
+    letter-spacing:0.5px;
+  }
+
+  /* ---- Splash ---- */
+  #splash{
+    position:fixed;
+    inset:0;
+    background:var(--dark);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    z-index:999;
+    transition:opacity .5s ease;
+  }
+  #splash img{
+    width:130px;
+    height:130px;
+    max-width:50vw;
+    max-height:50vw;
+    object-fit:contain;
+    border-radius:20px;
+    opacity:0;
+    will-change:transform;
+    backface-visibility:hidden;
+    transition:opacity .3s ease;
+  }
+  #splash img.loaded{
+    opacity:1;
+    animation:pulse 1.8s ease-in-out infinite;
+  }
+  #splash .welcome{
+    text-align:center;
+  }
+  #splash .welcome .line1{
+    display:block;
+    font-size:18px;
+    font-weight:800;
+    color:#ffffff;
+  }
+  #splash .welcome .line2{
+    display:block;
+    font-size:22px;
+    font-weight:900;
+    color:var(--yellow);
+    letter-spacing:2px;
+    margin-top:4px;
+  }
+  @keyframes pulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.05); }
+  }
+  #splash.hide{
+    opacity:0;
+    pointer-events:none;
+  }
+  body.loading{ overflow:hidden; }
+  body.loading .card{ visibility:hidden; }
+
+  /* ---- Share FAB ---- */
+  #shareFab{
+    position:fixed;
+    right:20px;
+    bottom:24px;
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:#E91E63;
+    color:#fff;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 18px rgba(233,30,99,0.45);
+    cursor:pointer;
+    z-index:500;
+    animation:fabFloat 2.4s ease-in-out infinite;
+    transition:transform .15s ease;
+  }
+  #shareFab:hover{ transform:scale(1.08); }
+  #shareFab svg{ width:24px; height:24px; }
+  @keyframes fabFloat{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-7px); }
+  }
+
+  /* ---- Share panel ---- */
+  #shareOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:800;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  #shareOverlay.open{ opacity:1; pointer-events:auto; }
+  #sharePanel{
+    background:#fff;
+    width:100%;
+    max-width:420px;
+    border-radius:20px 20px 0 0;
+    padding:24px 24px 28px;
+    transform:translateY(100%);
+    transition:transform .25s ease;
+  }
+  #shareOverlay.open #sharePanel{ transform:translateY(0); }
+  #sharePanel h2{
+    font-size:17px;
+    font-weight:800;
+    color:#E91E63;
+    margin-bottom:18px;
+  }
+  #closeShare{
+    position:absolute;
+    top:18px;
+    right:20px;
+    background:none;
+    border:none;
+    font-size:20px;
+    color:#999;
+    cursor:pointer;
+  }
+  .share-list{ display:flex; flex-direction:column; gap:18px; }
+  .share-opt{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    text-decoration:none;
+    color:var(--dark);
+    font-size:15px;
+    font-weight:700;
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .share-opt .s-ico{
+    width:38px; height:38px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; color:#fff;
+  }
+  .share-opt .s-ico svg{ width:18px; height:18px; }
+  .share-opt.fb .s-ico{ background:#1877F2; }
+  .share-opt.x .s-ico{ background:#111111; }
+  .share-opt.wa .s-ico{ background:#25D366; }
+  .share-opt.mail .s-ico{ background:#6b6b6b; }
+  .copy-row{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-top:4px;
+  }
+  .copy-row input{
+    flex:1;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:13px;
+    color:var(--grey);
+    background:#fafafa;
+  }
+  .copy-row button{
+    padding:10px 16px;
+    border:none;
+    border-radius:8px;
+    background:var(--dark);
+    color:#fff;
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .copy-row button.copied{ background:#2e7d32; }
+</style>
+</head>
+<body class="loading">
+
+  <div id="splash">
+    <img id="splashLogo" src="logo-yellow.png?v=3" alt="Crazy Clearance">
+    <div class="welcome">
+      <span class="line1">Welcome to Crazy Clearance</span>
+      <span class="line2">TIPTON</span>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <div class="brand">
+      <img src="logo.png?v=3" alt="Crazy Clearance" class="logo-mark">
+      <div class="location"><span class="city">Tipton</span><span class="postcode">DY4 9HG</span></div>
+    </div>
+
+    <div class="intro">
+      <h1>Follow & Save</h1>
+      <p>Follow us for weekly clearance drops, exclusive reservation stock, and deals at Tipton, Oldham &amp; Aylesbury.</p>
+    </div>
+
+    <div class="links">
+
+      <a class="link-row" href="https://crazyclearance.uk/" target="_blank" rel="noopener">
+        <span class="icon website">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </span>
+        <span class="link-text">
+          <span class="title">Visit our website</span>
+          <span class="subtitle">crazyclearance.uk</span>
+        </span>
+        <span class="chevron">&#8250;</span>
+      </a>
+
+      <a class="link-row" href="http://www.instagram.com/catalogueclearance" target="_blank" rel="noopener">
+        <span class="icon instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </span>
+        <span class="link-text">
+          <span class="title">Instagram</span>
+          <span class="subtitle">Follow us on Insta</span>
+        </span>
+        <span class="chevron">&#8250;</span>
+      </a>
+
+      <a class="link-row" href="https://www.facebook.com/catalogueclearanceltd" target="_blank" rel="noopener">
+        <span class="icon facebook">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M13.5 22v-8.3h2.8l.4-3.2h-3.2V8.4c0-.9.3-1.6 1.7-1.6h1.7V3.9C16.3 3.9 15.2 3.8 14 3.8c-2.5 0-4.2 1.5-4.2 4.3v2.4H7v3.2h2.8V22h3.7z"/></svg>
+        </span>
+        <span class="link-text">
+          <span class="title">Facebook</span>
+          <span class="subtitle">Follow us on FB</span>
+        </span>
+        <span class="chevron">&#8250;</span>
+      </a>
+
+      <a class="link-row" href="https://www.tiktok.com/@crazyclearanceltd" target="_blank" rel="noopener">
+        <span class="icon tiktok">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M16.6 5.82c-.9-.8-1.4-1.94-1.4-3.16h-3.05v13.44a2.6 2.6 0 1 1-2.6-2.6c.14 0 .28 0 .4.03V10.5a5.65 5.65 0 0 0-.4-.02A5.65 5.65 0 1 0 15.2 16.1V9.3a7.6 7.6 0 0 0 4.4 1.4V7.65a4.6 4.6 0 0 1-3-1.83z"/></svg>
+        </span>
+        <span class="link-text">
+          <span class="title">TikTok</span>
+          <span class="subtitle">Watch our TT</span>
+        </span>
+        <span class="chevron">&#8250;</span>
+      </a>
+
+      <a class="link-row" href="https://maps.app.goo.gl/rtn4VX4HFKJrNJVv5" target="_blank" rel="noopener">
+        <span class="icon google">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.26 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.85A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.49 12c0-.73.13-1.44.35-2.1V7.05H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.95l3.66-2.85z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.85C6.71 7.3 9.14 5.38 12 5.38z"/></svg>
+        </span>
+        <span class="link-text">
+          <span class="title">Google Review</span>
+          <span class="subtitle">Review us on Google</span>
+        </span>
+        <span class="chevron">&#8250;</span>
+      </a>
+
+    </div>
+
+    <footer>Crazy Clearance — Tipton · Oldham · Aylesbury</footer>
+  </div>
+
+  <button id="shareFab" aria-label="Share this page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg>
+  </button>
+
+  <div id="shareOverlay">
+    <div id="sharePanel">
+      <button id="closeShare" aria-label="Close">&times;</button>
+      <h2>Share page</h2>
+      <div class="share-list">
+        <a class="share-opt fb" target="_blank" rel="noopener" id="shareFb">
+          <span class="s-ico"><svg viewBox="0 0 24 24" fill="white"><path d="M13.5 22v-8.3h2.8l.4-3.2h-3.2V8.4c0-.9.3-1.6 1.7-1.6h1.7V3.9C16.3 3.9 15.2 3.8 14 3.8c-2.5 0-4.2 1.5-4.2 4.3v2.4H7v3.2h2.8V22h3.7z"/></svg></span>
+          Facebook
+        </a>
+        <a class="share-opt x" target="_blank" rel="noopener" id="shareX">
+          <span class="s-ico"><svg viewBox="0 0 24 24" fill="white"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7l-5.5-6.7L4.4 22H1.3l8.1-9.3L1 2h7.2l5 6.1L18.9 2zm-1.2 18h1.7L7.4 4h-1.8l12.1 16z"/></svg></span>
+          X
+        </a>
+        <a class="share-opt wa" target="_blank" rel="noopener" id="shareWa">
+          <span class="s-ico"><svg viewBox="0 0 24 24" fill="white"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.2-.4.1-.1 0-.3 0-.4L9.7 8.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 4 3.4.6.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.4-.3z"/></svg></span>
+          WhatsApp
+        </a>
+        <a class="share-opt mail" id="shareMail">
+          <span class="s-ico"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 6l10 7 10-7"/></svg></span>
+          Email
+        </a>
+        <div class="copy-row">
+          <input id="shareUrlBox" type="text" readonly>
+          <button id="copyBtn">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var MIN_SHOW = 3000; // ms, minimum splash time so logo always shows
+    var start = Date.now();
+
+    // fade the splash logo in only once it has actually decoded, so it
+    // never pulses on a half-loaded/broken image (that was the glitch)
+    var splashLogo = document.getElementById('splashLogo');
+    function markLoaded(){ splashLogo.classList.add('loaded'); }
+    if (splashLogo.complete && splashLogo.naturalWidth > 0) markLoaded();
+    else {
+      splashLogo.addEventListener('load', markLoaded);
+      splashLogo.addEventListener('error', markLoaded);
+    }
+    function reveal(){
+      var wait = Math.max(0, MIN_SHOW - (Date.now() - start));
+      setTimeout(function(){
+        document.getElementById('splash').classList.add('hide');
+        document.body.classList.remove('loading');
+      }, wait);
+    }
+    if (document.readyState === 'complete') reveal();
+    else window.addEventListener('load', reveal);
+    // fallback so page never gets stuck if load fires late
+    setTimeout(reveal, 3000);
+
+    // ---- Share ----
+    var pageUrl = 'https://kuntasrikanth.github.io/crazyclearancetipton/';
+    var shareText = 'Follow Crazy Clearance for weekly clearance drops and deals!';
+
+    document.getElementById('shareUrlBox').value = pageUrl;
+    document.getElementById('shareFb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(pageUrl);
+    document.getElementById('shareX').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText) + '&url=' + encodeURIComponent(pageUrl);
+    document.getElementById('shareWa').href = 'https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + pageUrl);
+    document.getElementById('shareMail').href = 'mailto:?subject=' + encodeURIComponent('Crazy Clearance') + '&body=' + encodeURIComponent(shareText + ' ' + pageUrl);
+
+    var fab = document.getElementById('shareFab');
+    var overlay = document.getElementById('shareOverlay');
+    fab.addEventListener('click', function(){
+      if (navigator.share) {
+        navigator.share({ title: 'Crazy Clearance', text: shareText, url: pageUrl }).catch(function(){});
+      } else {
+        overlay.classList.add('open');
+      }
+    });
+    document.getElementById('closeShare').addEventListener('click', function(){ overlay.classList.remove('open'); });
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.classList.remove('open'); });
+
+    var copyBtn = document.getElementById('copyBtn');
+    copyBtn.addEventListener('click', function(){
+      var box = document.getElementById('shareUrlBox');
+      box.select();
+      try {
+        navigator.clipboard.writeText(pageUrl);
+      } catch(e) {
+        document.execCommand('copy');
+      }
+      copyBtn.textContent = 'Copied';
+      copyBtn.classList.add('copied');
+      setTimeout(function(){ copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 1500);
+    });
+  </script>
+</body>
+</html>
